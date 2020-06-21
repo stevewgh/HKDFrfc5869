@@ -25,6 +25,18 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
+
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v0.9.2
+      with:
+          versionSpec: '5.2.x'
+
+    - name: Use GitVersion
+      id: gitversion # step id used as reference for output values
+      
+    - run: |
+        echo "SemVer: ${{ steps.gitversion.outputs.semVer }}"
+        echo "Major: ${{ steps.gitversion.outputs.major }}"
     - name: Install dependencies
       run: dotnet restore './src/HKDFrfc5869.sln'
     - name: Build
