@@ -39,7 +39,9 @@ jobs:
       uses: gittools/actions/gitversion/execute@v0.9.2
             
     - name: Create version tag
-      run: git tag ${{ steps.gitversion.outputs.semVer }}
+      run: |
+        git tag ${{ steps.gitversion.outputs.semVer }}
+        git push
             
     - run: |
         echo "SemVer: ${{ steps.gitversion.outputs.semVer }}"
