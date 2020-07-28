@@ -45,5 +45,8 @@ jobs:
     - name: Build
       run: dotnet build ${{env.SLN_FILE}} /p:AssemblyVersion=${{steps.gitversion.outputs.AssemblySemVer}} --configuration ${{env.CONFIGURATION}}
 
+    - name: Pack
+      run: dotnet pack ${{env.SLN_FILE}} -p:PackageVersion=${{steps.gitversion.outputs.SemVer}} --no-build
+
     - name: Test
       run: dotnet test ${{env.SLN_FILE}} --no-restore --no-build --verbosity normal --configuration ${{env.CONFIGURATION}}
