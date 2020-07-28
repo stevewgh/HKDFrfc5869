@@ -4,7 +4,7 @@ on: push
 
 env:
   SLN_FILE: './src/HKDFrfc5869.sln'
-  PACKAGE_LOCATION: './src/bin/Release/'
+  PACKAGE_LOCATION: './src/HKDFrfc5869/bin/Release/'
   PACKAGE_SOURCE: ''
 
   CONFIGURATION: Release
