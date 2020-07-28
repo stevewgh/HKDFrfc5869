@@ -5,6 +5,7 @@ on: push
 env:
   SLN_FILE: './src/HKDFrfc5869.sln'
   PACKAGE_LOCATION: './src/bin/Release/'
+  PACKAGE_SOURCE: ''
 
   CONFIGURATION: Release
 
@@ -50,7 +51,8 @@ jobs:
       run: dotnet pack ${{env.SLN_FILE}} -p:PackageVersion=${{steps.gitversion.outputs.SemVer}} --no-build
 
     - name: Publish
-      run: dotnet nuget push ${{env.PACKAGE_LOCATION}} --source "github"
+      run: 
+        dotnet nuget push ${{env.PACKAGE_LOCATION}} --source 'https://nuget.pkg.github.com/stevwgh/index.json' --api-key ${{secrets.GITHUB_TOKEN}}
 
     - name: Test
       run: dotnet test ${{env.SLN_FILE}} --no-restore --no-build --verbosity normal --configuration ${{env.CONFIGURATION}}
