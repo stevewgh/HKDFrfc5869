@@ -55,7 +55,7 @@ jobs:
 
     - name: Publish
       run: 
-        dotnet nuget push ${{env.PACKAGE_LOCATION}} --source https://nuget.pkg.github.com/stevewgh/HKDFrfc5869/index.json
+        dotnet nuget push ${{env.PACKAGE_LOCATION}}
 
     - name: Test
       run: dotnet test ${{env.SLN_FILE}} --no-restore --no-build --verbosity normal --configuration ${{env.CONFIGURATION}}
