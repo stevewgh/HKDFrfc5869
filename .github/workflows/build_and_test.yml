@@ -4,6 +4,7 @@ on: push
 
 env:
   SLN_FILE: './src/HKDFrfc5869.sln'
+  PACKAGE_LOCATION: './src/bin/Release/'
 
   CONFIGURATION: Release
 
@@ -47,6 +48,9 @@ jobs:
 
     - name: Pack
       run: dotnet pack ${{env.SLN_FILE}} -p:PackageVersion=${{steps.gitversion.outputs.SemVer}} --no-build
+
+    - name: Publish
+      run: dotnet nuget push ${{env.PACKAGE_LOCATION}} --source "github"
 
     - name: Test
       run: dotnet test ${{env.SLN_FILE}} --no-restore --no-build --verbosity normal --configuration ${{env.CONFIGURATION}}
