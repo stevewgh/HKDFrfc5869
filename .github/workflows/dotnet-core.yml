@@ -48,7 +48,7 @@ jobs:
       run: dotnet restore ${{env.SLN_FILE}}
 
     - name: Build
-      run: dotnet build ${{env.SLN_FILE}} dotnet build /p:AssemblyVersion=${{ steps.gitversion.outputs.AssemblySemVer }} --configuration Release --no-restore
+      run: dotnet build ${{env.SLN_FILE}} /p:AssemblyVersion=${{ steps.gitversion.outputs.AssemblySemVer }} --configuration Release --no-restore
 
     - name: Test
       run: dotnet test ${{env.SLN_FILE}} --no-restore --no-build --verbosity normal
