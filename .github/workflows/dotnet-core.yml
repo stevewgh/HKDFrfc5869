@@ -5,6 +5,8 @@ on: push
 env:
   SLN_FILE: './src/HKDFrfc5869.sln'
 
+  CONFIGURATION: Release
+
   # no spam
   DOTNET_NOLOGO: true
 
@@ -40,11 +42,8 @@ jobs:
       id: gitversion # step id used as reference for output values
       uses: gittools/actions/gitversion/execute@v0.9.2
 
-    - name: Install dependencies
-      run: dotnet restore ${{env.SLN_FILE}}
-
     - name: Build
-      run: dotnet build ${{env.SLN_FILE}} /p:AssemblyVersion=${{steps.gitversion.outputs.AssemblySemVer}} --configuration Release --no-restore
+      run: dotnet build ${{env.SLN_FILE}} /p:AssemblyVersion=${{steps.gitversion.outputs.AssemblySemVer}} --configuration ${{env.CONFIGURATION}}
 
     - name: Test
-      run: dotnet test ${{env.SLN_FILE}} --no-restore --no-build --verbosity normal
+      run: dotnet test ${{env.SLN_FILE}} --no-restore --no-build --verbosity normal --configuration ${{env.CONFIGURATION}}
