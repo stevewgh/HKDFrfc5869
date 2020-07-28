@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>HKDFrfc5869</RootNamespace>
+    <RepositoryUrl>https://github.com/stevewgh/HKDFrfc5869.git</RepositoryUrl>
   </PropertyGroup>
 
 </Project>
