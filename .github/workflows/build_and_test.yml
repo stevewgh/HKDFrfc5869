@@ -34,7 +34,7 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
-        source-url: https://nuget.pkg.github.com/stevewgh/HKDFrfc5869/index.json
+        source-url: https://nuget.pkg.github.com/stevewgh/index.json
       env:
         NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
@@ -55,7 +55,7 @@ jobs:
 
     - name: Publish
       run: 
-        dotnet nuget push ${{env.PACKAGE_LOCATION}}
+        dotnet nuget push ${{env.PACKAGE_LOCATION}} --source https://nuget.pkg.github.com/stevewgh/HKDFrfc5869/index.json
 
     - name: Test
       run: dotnet test ${{env.SLN_FILE}} --no-restore --no-build --verbosity normal --configuration ${{env.CONFIGURATION}}
