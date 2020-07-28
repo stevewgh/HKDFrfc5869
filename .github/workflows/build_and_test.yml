@@ -52,7 +52,7 @@ jobs:
 
     - name: Publish
       run: 
-        dotnet nuget push ${{env.PACKAGE_LOCATION}} --source 'https://nuget.pkg.github.com/stevwgh/index.json' --api-key ${{secrets.GITHUB_TOKEN}}
+        dotnet nuget push ${{env.PACKAGE_LOCATION}} --source 'https://nuget.pkg.github.com/stevwgh/HKDFrfc5869/index.json' --api-key ${{secrets.GITHUB_TOKEN}}
 
     - name: Test
       run: dotnet test ${{env.SLN_FILE}} --no-restore --no-build --verbosity normal --configuration ${{env.CONFIGURATION}}
