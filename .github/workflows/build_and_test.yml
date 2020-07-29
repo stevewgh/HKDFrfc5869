@@ -1,6 +1,12 @@
 name: Build and Test
 
-on: push
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 
 env:
   SLN_FILE: './src/HKDFrfc5869.sln'
@@ -52,9 +58,15 @@ jobs:
     - name: Pack
       run: dotnet pack ${{env.SLN_FILE}} -p:PackageVersion=${{steps.gitversion.outputs.SemVer}} --no-build
 
-    - name: Publish
+    - name: Publish to GitHub Packages
+      if: github.ref != 'refs/heads/master'
       run: 
-        dotnet nuget push ${{env.PACKAGE_LOCATION}}
+        dotnet nuget push ${{env.PACKAGE_LOCATION}} --skip-duplicate
+
+    - name: Publish to Nuget.org
+      if: github.ref == 'refs/heads/master' && github.event_name == 'push-remove-me'
+      run: 
+        dotnet nuget push ${{env.PACKAGE_LOCATION}} -k ${{secrets.NUGET_ORG_API_KEY}} -s https://api.nuget.org/v3/index.json
 
     - name: Test
       run: dotnet test ${{env.SLN_FILE}} --no-restore --no-build --verbosity normal --configuration ${{env.CONFIGURATION}}

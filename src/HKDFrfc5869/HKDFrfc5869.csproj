@@ -4,6 +4,22 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>HKDFrfc5869</RootNamespace>
     <RepositoryUrl>https://github.com/stevewgh/HKDFrfc5869.git</RepositoryUrl>
+    <PackageId>HKDFrfc5869</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Steven Ward</Authors>
+    <Company></Company>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageProjectUrl>https://github.com/stevewgh/HKDFrfc5869</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <Description>An implementation of the rfc5869 HMAC based Extract-and-Expand Key Derivation Function (HKDF) (https://tools.ietf.org/html/rfc5869)</Description>    
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>
