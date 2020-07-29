@@ -16,19 +16,13 @@ namespace HKDFrfc5869.Tests
             var info = StringToByteArray("f0f1f2f3f4f5f6f7f8f9");
             var len = 42;
 
-            var expectedPrk = StringToByteArray("077709362c2e32df0ddc3f0dc47bba63" +
-                                                "90b6c73bb50f9c3122ec844ad7c2b3e5");
             var expectedOkm = StringToByteArray("3cb25f25faacd57a90434f64d0362f2a" +
                                                 "2d2d0a90cf1a5a4c5db02d56ecc4c5bf" +
                                                 "34007208d5b887185865");
 
             using (var hkdf = new HKDF(hash))
             {
-                var actualPrk = hkdf.Extract(ikm, salt);
-
-                Assert.Equal(expectedPrk, actualPrk);
-
-                var actualOkm = hkdf.Expand(actualPrk, len, info);
+                var actualOkm = hkdf.DeriveKey(salt, ikm, info, len);
 
                 Assert.Equal(expectedOkm, actualOkm);
             }
@@ -55,8 +49,6 @@ namespace HKDFrfc5869.Tests
                                          "f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff");
             var len = 82;
 
-            var expectedPrk = StringToByteArray("06a6b88c5853361a06104c9ceb35b45c" +
-                                                "ef760014904671014a193f40c15fc244");
             var expectedOkm = StringToByteArray("b11e398dc80327a1c8e7f78c596a4934" +
                                                 "4f012eda2d4efad8a050cc4c19afa97c" +
                                                 "59045a99cac7827271cb41c65e590e09" +
@@ -66,11 +58,7 @@ namespace HKDFrfc5869.Tests
 
             using (var hkdf = new HKDF(hash))
             {
-                var actualPrk = hkdf.Extract(ikm, salt);
-
-                Assert.Equal(expectedPrk, actualPrk);
-
-                var actualOkm = hkdf.Expand(actualPrk, len, info);
+                var actualOkm = hkdf.DeriveKey(salt, ikm, info, len);
 
                 Assert.Equal(expectedOkm, actualOkm);
             }
@@ -85,16 +73,11 @@ namespace HKDFrfc5869.Tests
             var info = Array.Empty<byte>();
             var len = 42;
 
-            var expectedPrk = StringToByteArray("19ef24a32c717b167f33a91d6f648bdf96596776afdb6377ac434c1c293ccb04");
             var expectedOkm = StringToByteArray("8da4e775a563c18f715f802a063c5a31b8a11f5c5ee1879ec3454e5f3c738d2d9d201395faa4b61a96c8");
 
             using (var hkdf = new HKDF(hash))
             {
-                var actualPrk = hkdf.Extract(ikm, salt);
-
-                Assert.Equal(expectedPrk, actualPrk);
-
-                var actualOkm = hkdf.Expand(actualPrk, len, info);
+                var actualOkm = hkdf.DeriveKey(salt, ikm, info, len);
 
                 Assert.Equal(expectedOkm, actualOkm);
             }
@@ -109,18 +92,13 @@ namespace HKDFrfc5869.Tests
             var info = StringToByteArray("f0f1f2f3f4f5f6f7f8f9");
             var len = 42;
 
-            var expectedPrk = StringToByteArray("9b6c18c432a7bf8f0e71c8eb88f4b30baa2ba243");
             var expectedOkm = StringToByteArray("085a01ea1b10f36933068b56efa5ad81" +
                                                 "a4f14b822f5b091568a9cdd4f155fda2" +
                                                 "c22e422478d305f3f896");
 
             using (var hkdf = new HKDF(hash))
             {
-                var actualPrk = hkdf.Extract(ikm, salt);
-
-                Assert.Equal(expectedPrk, actualPrk);
-
-                var actualOkm = hkdf.Expand(actualPrk, len, info);
+                var actualOkm = hkdf.DeriveKey(salt, ikm, info, len);
 
                 Assert.Equal(expectedOkm, actualOkm);
             }
@@ -147,7 +125,6 @@ namespace HKDFrfc5869.Tests
                                          "f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff");
             var len = 82;
 
-            var expectedPrk = StringToByteArray("8adae09a2a307059478d309b26c4115a224cfaf6");
             var expectedOkm = StringToByteArray("0bd770a74d1160f7c9f12cd5912a06eb" +
                                                 "ff6adcae899d92191fe4305673ba2ffe" +
                                                 "8fa3f1a4e5ad79f3f334b3b202b2173c" +
@@ -157,11 +134,7 @@ namespace HKDFrfc5869.Tests
 
             using (var hkdf = new HKDF(hash))
             {
-                var actualPrk = hkdf.Extract(ikm, salt);
-
-                Assert.Equal(expectedPrk, actualPrk);
-
-                var actualOkm = hkdf.Expand(actualPrk, len, info);
+                var actualOkm = hkdf.DeriveKey(salt, ikm, info, len);
 
                 Assert.Equal(expectedOkm, actualOkm);
             }
@@ -176,18 +149,13 @@ namespace HKDFrfc5869.Tests
             var info = Array.Empty<byte>();
             var len = 42;
 
-            var expectedPrk = StringToByteArray("da8c8a73c7fa77288ec6f5e7c297786aa0d32d01");
             var expectedOkm = StringToByteArray("0ac1af7002b3d761d1e55298da9d0506" +
                                                 "b9ae52057220a306e07b6b87e8df21d0" +
                                                 "ea00033de03984d34918");
 
             using (var hkdf = new HKDF(hash))
             {
-                var actualPrk = hkdf.Extract(ikm, salt);
-
-                Assert.Equal(expectedPrk, actualPrk);
-
-                var actualOkm = hkdf.Expand(actualPrk, len, info);
+                var actualOkm = hkdf.DeriveKey(salt, ikm, info, len);
 
                 Assert.Equal(expectedOkm, actualOkm);
             }
@@ -202,27 +170,16 @@ namespace HKDFrfc5869.Tests
             var info = Array.Empty<byte>();
             var len = 42;
 
-            var expectedPrk = StringToByteArray("2adccada18779e7c2077ad2eb19d3f3e731385dd");
             var expectedOkm = StringToByteArray("2c91117204d745f3500d636a62f64f0a" +
                                                 "b3bae548aa53d423b0d1f27ebba6f5e5" +
                                                 "673a081d70cce7acfc48");
 
             using (var hkdf = new HKDF(hash))
             {
-                var actualPrk = hkdf.Extract(ikm, salt);
-
-                Assert.Equal(expectedPrk, actualPrk);
-
-                var actualOkm = hkdf.Expand(actualPrk, len, info);
+                var actualOkm = hkdf.DeriveKey(salt, ikm, info, len);
 
                 Assert.Equal(expectedOkm, actualOkm);
             }
-        }
-
-        [Fact]
-        public void TestCase8()
-        {
-            Assert.True(false);
         }
 
         public static byte[] StringToByteArray(string hex)
