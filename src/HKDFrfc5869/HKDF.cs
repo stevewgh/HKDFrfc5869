@@ -6,49 +6,44 @@ namespace HKDFrfc5869
     public sealed class HKDF : IDisposable
     {
         private bool disposed = false;
-        //private readonly HashAlgorithmName algorithm;
         private readonly HMAC hmac;
+        private readonly int digestLength;
 
         public HKDF(HashAlgorithmName algo)
         {
-            this.hmac = this.determineHMAC(algo);
-            //this.digestLength = this.hmac.ComputeHash(ikm).Length;
+            this.hmac = this.CreateHMACInstance(algo);
+            this.digestLength = this.hmac.HashSize / 8;
         }
 
-        public byte[] DeriveKey(byte[] salt, byte[] ikm, byte[] info, int outputLength = 0)
+        public byte[] DeriveKey(byte[] salt, byte[] inputKeyingMaterial, byte[] info, int outputLength = 0)
         {
-            var digestLength = this.hmac.HashSize / 8;
+            CheckIfDisposed();
 
             if (outputLength == 0)
             {
-                outputLength = this.hmac.HashSize / 8;
+                outputLength = digestLength;
             }
 
-            if (outputLength < 0 || outputLength > 255 * digestLength)
+            int maxAllowedDigestLength = 255 * digestLength;
+
+            if (outputLength < 0 || outputLength > maxAllowedDigestLength)
             {
-                throw new Exception("Bad output length requested of HKDF");
+                throw new ArgumentOutOfRangeException(nameof(outputLength), outputLength, $"Output length must be between 1 and {maxAllowedDigestLength}");
             }
 
-            if (info == null)
-            {
-                info = new byte[0];
-            }
-
-            var prk = Extract(salt, ikm);
-
-            if (prk.Length < digestLength)
-            {
-                throw new Exception("Psuedo-random key is larger then digest length. Cannot perform operation");
-            }
-
-            var result = Expand(prk, outputLength, info);
-            return result;
+            return Expand(Extract(inputKeyingMaterial, salt), outputLength, info);
         }
 
-        internal byte[] Extract(byte[] ikm, byte[] salt)
+        private void CheckIfDisposed()
         {
-            var digestLength = this.hmac.HashSize / 8;
+            if(disposed)
+            {
+                throw new ObjectDisposedException("HKDF has been disposed");
+            }
+        }
 
+        private byte[] Extract(byte[] ikm, byte[] salt)
+        {
             if (salt == null)
             {
                 salt = new byte[digestLength];
@@ -57,8 +52,13 @@ namespace HKDFrfc5869
             return this.HMAC(salt, ikm);
         }
 
-        internal byte[] Expand(byte[] prk, int len, byte[] info)
+        private byte[] Expand(byte[] prk, int len, byte[] info)
         {
+            if (info == null)
+            {
+                info = new byte[0];
+            }
+
             var resultBlock = new byte[0];
             var result = new byte[len];
             var bytesRemaining = len;
@@ -81,33 +81,24 @@ namespace HKDFrfc5869
         {
             if (!disposed)
             {
-                if (disposing)
-                {
-                    // TODO: dispose managed state (managed objects).
-                }
-
-                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
-                // TODO: set large fields to null.
-
+                using (this.hmac) { }
                 disposed = true;
             }
         }
 
-        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
-        // ~HKDF()
-        // {
-        //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-        //   Dispose(false);
-        // }
+        ~HKDF()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(false);
+        }
 
         public void Dispose()
         {
             Dispose(true);
-            // TODO: uncomment the following line if the finalizer is overridden above.
-            // GC.SuppressFinalize(this);
+            GC.SuppressFinalize(this);
         }
 
-        private HMAC determineHMAC(HashAlgorithmName algorithm)
+        private HMAC CreateHMACInstance(HashAlgorithmName algorithm)
         {
             if (algorithm == HashAlgorithmName.MD5)
             {
@@ -129,8 +120,10 @@ namespace HKDFrfc5869
             {
                 return new HMACSHA512();
             }
-
-            return new HMACSHA256();
+            else
+            {
+                throw new ArgumentOutOfRangeException(nameof(algorithm), algorithm, "Unsupported HashAlgorithmName");
+            }
         }
 
         private byte[] HMAC(byte[] key, byte[] message)
