@@ -22,7 +22,7 @@ namespace HKDFrfc5869.Tests
 
             using (var hkdf = new HKDF(hash))
             {
-                var actualOkm = hkdf.DeriveKey(salt, ikm, info, len);
+                var actualOkm = hkdf.DeriveKey(ikm, salt, info, len);
 
                 Assert.Equal(expectedOkm, actualOkm);
             }
@@ -58,7 +58,7 @@ namespace HKDFrfc5869.Tests
 
             using (var hkdf = new HKDF(hash))
             {
-                var actualOkm = hkdf.DeriveKey(salt, ikm, info, len);
+                var actualOkm = hkdf.DeriveKey(ikm, salt, info, len);
 
                 Assert.Equal(expectedOkm, actualOkm);
             }
@@ -77,7 +77,7 @@ namespace HKDFrfc5869.Tests
 
             using (var hkdf = new HKDF(hash))
             {
-                var actualOkm = hkdf.DeriveKey(salt, ikm, info, len);
+                var actualOkm = hkdf.DeriveKey(ikm, salt, info, len);
 
                 Assert.Equal(expectedOkm, actualOkm);
             }
@@ -98,7 +98,7 @@ namespace HKDFrfc5869.Tests
 
             using (var hkdf = new HKDF(hash))
             {
-                var actualOkm = hkdf.DeriveKey(salt, ikm, info, len);
+                var actualOkm = hkdf.DeriveKey(ikm, salt, info, len);
 
                 Assert.Equal(expectedOkm, actualOkm);
             }
@@ -134,7 +134,7 @@ namespace HKDFrfc5869.Tests
 
             using (var hkdf = new HKDF(hash))
             {
-                var actualOkm = hkdf.DeriveKey(salt, ikm, info, len);
+                var actualOkm = hkdf.DeriveKey(ikm, salt, info, len);
 
                 Assert.Equal(expectedOkm, actualOkm);
             }
@@ -155,7 +155,7 @@ namespace HKDFrfc5869.Tests
 
             using (var hkdf = new HKDF(hash))
             {
-                var actualOkm = hkdf.DeriveKey(salt, ikm, info, len);
+                var actualOkm = hkdf.DeriveKey(ikm, salt, info, len);
 
                 Assert.Equal(expectedOkm, actualOkm);
             }
@@ -176,7 +176,7 @@ namespace HKDFrfc5869.Tests
 
             using (var hkdf = new HKDF(hash))
             {
-                var actualOkm = hkdf.DeriveKey(salt, ikm, info, len);
+                var actualOkm = hkdf.DeriveKey(ikm, salt, info, len);
 
                 Assert.Equal(expectedOkm, actualOkm);
             }
