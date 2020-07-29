@@ -219,12 +219,6 @@ namespace HKDFrfc5869.Tests
             }
         }
 
-        [Fact]
-        public void TestCase8()
-        {
-            Assert.True(false);
-        }
-
         public static byte[] StringToByteArray(string hex)
         {
             var numberChars = hex.Length;
