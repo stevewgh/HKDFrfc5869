@@ -20,12 +20,10 @@ namespace HKDFrfc5869.Tests
                                                 "2d2d0a90cf1a5a4c5db02d56ecc4c5bf" +
                                                 "34007208d5b887185865");
 
-            using (var hkdf = new HKDF(hash))
-            {
-                var actualOkm = hkdf.DeriveKey(ikm, salt, info, len);
+            using var hkdf = new HKDF(hash);
+            var actualOkm = hkdf.DeriveKey(ikm, salt, info, len);
 
-                Assert.Equal(expectedOkm, actualOkm);
-            }
+            Assert.Equal(expectedOkm, actualOkm);
         }
 
         [Fact]
@@ -56,12 +54,10 @@ namespace HKDFrfc5869.Tests
                                                 "cc30c58179ec3e87c14c01d5c1f3434f" +
                                                 "1d87");
 
-            using (var hkdf = new HKDF(hash))
-            {
-                var actualOkm = hkdf.DeriveKey(ikm, salt, info, len);
+            using var hkdf = new HKDF(hash);
+            var actualOkm = hkdf.DeriveKey(ikm, salt, info, len);
 
-                Assert.Equal(expectedOkm, actualOkm);
-            }
+            Assert.Equal(expectedOkm, actualOkm);
         }
 
         [Fact]
@@ -75,12 +71,10 @@ namespace HKDFrfc5869.Tests
 
             var expectedOkm = StringToByteArray("8da4e775a563c18f715f802a063c5a31b8a11f5c5ee1879ec3454e5f3c738d2d9d201395faa4b61a96c8");
 
-            using (var hkdf = new HKDF(hash))
-            {
-                var actualOkm = hkdf.DeriveKey(ikm, salt, info, len);
+            using var hkdf = new HKDF(hash);
+            var actualOkm = hkdf.DeriveKey(ikm, salt, info, len);
 
-                Assert.Equal(expectedOkm, actualOkm);
-            }
+            Assert.Equal(expectedOkm, actualOkm);
         }
 
         [Fact]
@@ -96,12 +90,10 @@ namespace HKDFrfc5869.Tests
                                                 "a4f14b822f5b091568a9cdd4f155fda2" +
                                                 "c22e422478d305f3f896");
 
-            using (var hkdf = new HKDF(hash))
-            {
-                var actualOkm = hkdf.DeriveKey(ikm, salt, info, len);
+            using var hkdf = new HKDF(hash);
+            var actualOkm = hkdf.DeriveKey(ikm, salt, info, len);
 
-                Assert.Equal(expectedOkm, actualOkm);
-            }
+            Assert.Equal(expectedOkm, actualOkm);
         }
 
         [Fact]
@@ -132,12 +124,10 @@ namespace HKDFrfc5869.Tests
                                                 "927336d0441f4c4300e2cff0d0900b52" +
                                                 "d3b4");
 
-            using (var hkdf = new HKDF(hash))
-            {
-                var actualOkm = hkdf.DeriveKey(ikm, salt, info, len);
+            using var hkdf = new HKDF(hash);
+            var actualOkm = hkdf.DeriveKey(ikm, salt, info, len);
 
-                Assert.Equal(expectedOkm, actualOkm);
-            }
+            Assert.Equal(expectedOkm, actualOkm);
         }
 
         [Fact]
@@ -153,12 +143,10 @@ namespace HKDFrfc5869.Tests
                                                 "b9ae52057220a306e07b6b87e8df21d0" +
                                                 "ea00033de03984d34918");
 
-            using (var hkdf = new HKDF(hash))
-            {
-                var actualOkm = hkdf.DeriveKey(ikm, salt, info, len);
+            using var hkdf = new HKDF(hash);
+            var actualOkm = hkdf.DeriveKey(ikm, salt, info, len);
 
-                Assert.Equal(expectedOkm, actualOkm);
-            }
+            Assert.Equal(expectedOkm, actualOkm);
         }
 
         [Fact]
@@ -174,12 +162,10 @@ namespace HKDFrfc5869.Tests
                                                 "b3bae548aa53d423b0d1f27ebba6f5e5" +
                                                 "673a081d70cce7acfc48");
 
-            using (var hkdf = new HKDF(hash))
-            {
-                var actualOkm = hkdf.DeriveKey(ikm, salt, info, len);
+            using var hkdf = new HKDF(hash);
+            var actualOkm = hkdf.DeriveKey(ikm, salt, info, len);
 
-                Assert.Equal(expectedOkm, actualOkm);
-            }
+            Assert.Equal(expectedOkm, actualOkm);
         }
 
         public static byte[] StringToByteArray(string hex)
