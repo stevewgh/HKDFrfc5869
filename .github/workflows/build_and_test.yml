@@ -67,6 +67,6 @@ jobs:
         dotnet nuget push ${{env.PACKAGE_LOCATION}} --skip-duplicate
 
     - name: Publish to Nuget.org
-      if: github.ref == 'refs/heads/master' && github.event_name == 'push-remove-me'
+      if: github.ref == 'refs/heads/master' && github.event_name == 'push'
       run: 
         dotnet nuget push ${{env.PACKAGE_LOCATION}} -k ${{secrets.NUGET_ORG_API_KEY}} -s https://api.nuget.org/v3/index.json
