@@ -16,10 +16,10 @@
             DigestLength = hmac.HashSize / 8;
         }
 
-        public byte[] HMAC(byte[] key, byte[] message)
+        public Span<byte> HMAC(ReadOnlySpan<byte> key, ReadOnlySpan<byte> message)
         {
-            hmac.Key = key;
-            return hmac.ComputeHash(message);
+            hmac.Key = key.ToArray();
+            return new Span<byte>(hmac.ComputeHash(message.ToArray()));
         }
 
         private HMAC CreateHMACInstance(HashAlgorithmName algorithm)
