@@ -21,14 +21,14 @@ namespace HKDFrfc5869
         }
 
         /// <summary>
-        /// HMAC based Extract-and-Expand Key Derivation Function which returns cryptographically random keying material.
+        /// HMAC based Extract-and-Expand Key Derivation Function which returns deterministic keying material with good entropy.
         /// </summary>
         /// <param name="inputKeyingMaterial">Secret: The input keying material is not necessarily distributed uniformly, and the attacker may have some partial knowledge about it (for example, a Diffie-Hellman value computed by a key exchange protocol) or even partial control of it (as in some entropy-gathering applications).</param>
         /// <param name="salt">Non Secret: Optional salt value (a non-secret random value). If not provided, zeros are used.</param>
         /// <param name="info">Non Secret: Optional value which may contain a protocol number, algorithm identifiers, user identities, etc which can be used to derive different keys when the same <paramref name="inputKeyingMaterial"/> is used for two different purposes</param>
         /// <param name="outputLength">Optional length of output keying material. If not provided, the output keying material will match the digest length of the HashAlgorithm requested.</param>
-        /// <returns></returns>
-        public byte[] DeriveKey(byte[] inputKeyingMaterial, byte[] salt = null, byte[] info = null, int? outputLength = null)
+        /// <returns>Keying material of <paramref name="outputLength"/> length or the digest length of the HashAlgorithm requested if <paramref name="outputLength"/> is ommited</returns>
+        public ReadOnlySpan<byte> DeriveKey(ReadOnlySpan<byte> inputKeyingMaterial, Span<byte> salt = default, Span<byte> info = default, int? outputLength = null)
         {
             CheckIfDisposed();
 
@@ -49,7 +49,7 @@ namespace HKDFrfc5869
                 throw new ArgumentOutOfRangeException(nameof(outputLength), outputLength, $"Output length must be between 1 and {maxAllowedDigestLength}");
             }
 
-            return Expand(Extract(inputKeyingMaterial, salt), outputLength.Value, info);
+            return Expand(Extract(inputKeyingMaterial, salt), info, outputLength.Value);
         }
 
         private void CheckIfDisposed()
@@ -60,36 +60,40 @@ namespace HKDFrfc5869
             }
         }
 
-        private byte[] Extract(byte[] ikm, byte[] salt)
+        private Span<byte> Extract(ReadOnlySpan<byte> inputKeyingMaterial, Span<byte> salt)
         {
-            if (salt == null)
+            if (salt.IsEmpty)
             {
                 salt = new byte[this.hmacProvider.DigestLength];
             }
 
-            return this.hmacProvider.HMAC(salt, ikm);
+            return this.hmacProvider.HMAC(salt, inputKeyingMaterial);
         }
 
-        private byte[] Expand(byte[] prk, int len, byte[] info)
+        private ReadOnlySpan<byte> Expand(Span<byte> pseudoRandomKey, Span<byte> info, int outputLength)
         {
-            if (info == null)
+            if (info.IsEmpty)
             {
                 info = new byte[0];
             }
 
-            var resultBlock = new byte[0];
-            var result = new byte[len];
-            var bytesRemaining = len;
+            var hashedValue = new Span<byte>();
+            var result = new Span<byte>(new byte[outputLength]);
+            var bytesRemaining = outputLength;
 
             for (int i = 1; bytesRemaining > 0; i++)
             {
-                var currentInfo = new byte[resultBlock.Length + info.Length + 1];
-                Array.Copy(resultBlock, 0, currentInfo, 0, resultBlock.Length);
-                Array.Copy(info, 0, currentInfo, resultBlock.Length, info.Length);
-                currentInfo[currentInfo.Length - 1] = (byte)i;
-                resultBlock = this.hmacProvider.HMAC(prk, currentInfo);
-                Array.Copy(resultBlock, 0, result, len - bytesRemaining, Math.Min(resultBlock.Length, bytesRemaining));
-                bytesRemaining -= resultBlock.Length;
+                var tumbledValue = new Span<byte>(new byte[hashedValue.Length + info.Length + 1]);
+                hashedValue.CopyTo(tumbledValue);
+                info.CopyTo(tumbledValue.Slice(hashedValue.Length, info.Length));
+                tumbledValue[tumbledValue.Length - 1] = (byte)i;
+
+                hashedValue = this.hmacProvider.HMAC(pseudoRandomKey, tumbledValue);
+                
+                int lengthToCopy = Math.Min(hashedValue.Length, bytesRemaining);
+                hashedValue.Slice(0, lengthToCopy).CopyTo(result.Slice(outputLength - bytesRemaining, lengthToCopy));
+
+                bytesRemaining -= hashedValue.Length;
             }
 
             return result;
