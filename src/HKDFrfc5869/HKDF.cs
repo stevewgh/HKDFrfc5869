@@ -77,19 +77,23 @@ namespace HKDFrfc5869
                 info = new byte[0];
             }
 
-            var resultBlock = new byte[0];
-            var result = new byte[outputLength];
+            var hashedValue = new Span<byte>();
+            var result = new Span<byte>(new byte[outputLength]);
             var bytesRemaining = outputLength;
 
             for (int i = 1; bytesRemaining > 0; i++)
             {
-                var currentInfo = new byte[resultBlock.Length + info.Length + 1];
-                Array.Copy(resultBlock, 0, currentInfo, 0, resultBlock.Length);
-                Array.Copy(info.ToArray(), 0, currentInfo, resultBlock.Length, info.Length);
-                currentInfo[currentInfo.Length - 1] = (byte)i;
-                resultBlock = this.hmacProvider.HMAC(pseudoRandomKey.ToArray(), currentInfo).ToArray();
-                Array.Copy(resultBlock, 0, result, outputLength - bytesRemaining, Math.Min(resultBlock.Length, bytesRemaining));
-                bytesRemaining -= resultBlock.Length;
+                var tumbledValue = new Span<byte>(new byte[hashedValue.Length + info.Length + 1]);
+                hashedValue.CopyTo(tumbledValue);
+                info.CopyTo(tumbledValue.Slice(hashedValue.Length, info.Length));
+                tumbledValue[tumbledValue.Length - 1] = (byte)i;
+
+                hashedValue = this.hmacProvider.HMAC(pseudoRandomKey, tumbledValue);
+                
+                int lengthToCopy = Math.Min(hashedValue.Length, bytesRemaining);
+                hashedValue.Slice(0, lengthToCopy).CopyTo(result.Slice(outputLength - bytesRemaining, lengthToCopy));
+
+                bytesRemaining -= hashedValue.Length;
             }
 
             return result;
