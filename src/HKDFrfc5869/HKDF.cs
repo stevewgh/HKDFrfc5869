@@ -15,9 +15,14 @@ namespace HKDFrfc5869
             this.digestLength = this.hmac.HashSize / 8;
         }
 
-        public byte[] DeriveKey(byte[] salt, byte[] inputKeyingMaterial, byte[] info, int outputLength = 0)
+        public byte[] DeriveKey(byte[] inputKeyingMaterial, byte[] salt = null, byte[] info = null, int outputLength = 0)
         {
             CheckIfDisposed();
+
+            if(inputKeyingMaterial == null || inputKeyingMaterial.Length == 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(inputKeyingMaterial), "Must be non null and have a non zero length");
+            }
 
             if (outputLength == 0)
             {
