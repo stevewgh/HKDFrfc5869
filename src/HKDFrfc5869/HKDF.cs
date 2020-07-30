@@ -3,19 +3,32 @@ using System.Security.Cryptography;
 
 namespace HKDFrfc5869
 {
+    /// <summary>
+    /// HMAC based Extract-and-Expand Key Derivation Class
+    /// </summary>
     public sealed class HKDF : IDisposable
     {
         private bool disposed = false;
-        private readonly HMAC hmac;
-        private readonly int digestLength;
+        private readonly HMACProvider hmacProvider;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="algo"></param>
         public HKDF(HashAlgorithmName algo)
         {
-            this.hmac = this.CreateHMACInstance(algo);
-            this.digestLength = this.hmac.HashSize / 8;
+            this.hmacProvider = new HMACProvider(algo);
         }
 
-        public byte[] DeriveKey(byte[] inputKeyingMaterial, byte[] salt = null, byte[] info = null, int outputLength = 0)
+        /// <summary>
+        /// HMAC based Extract-and-Expand Key Derivation Function which returns cryptographically random keying material.
+        /// </summary>
+        /// <param name="inputKeyingMaterial">Secret: The input keying material is not necessarily distributed uniformly, and the attacker may have some partial knowledge about it (for example, a Diffie-Hellman value computed by a key exchange protocol) or even partial control of it (as in some entropy-gathering applications).</param>
+        /// <param name="salt">Non Secret: Optional salt value (a non-secret random value). If not provided, zeros are used.</param>
+        /// <param name="info">Non Secret: Optional value which may contain a protocol number, algorithm identifiers, user identities, etc which can be used to derive different keys when the same <paramref name="inputKeyingMaterial"/> is used for two different purposes</param>
+        /// <param name="outputLength">Optional length of output keying material. If not provided, the output keying material will match the digest length of the HashAlgorithm requested.</param>
+        /// <returns></returns>
+        public byte[] DeriveKey(byte[] inputKeyingMaterial, byte[] salt = null, byte[] info = null, int? outputLength = null)
         {
             CheckIfDisposed();
 
@@ -24,19 +37,19 @@ namespace HKDFrfc5869
                 throw new ArgumentOutOfRangeException(nameof(inputKeyingMaterial), "Must be non null and have a non zero length");
             }
 
-            if (outputLength == 0)
+            if (!outputLength.HasValue)
             {
-                outputLength = digestLength;
+                outputLength = this.hmacProvider.DigestLength;
             }
 
-            int maxAllowedDigestLength = 255 * digestLength;
+            int maxAllowedDigestLength = 255 * this.hmacProvider.DigestLength;
 
             if (outputLength < 0 || outputLength > maxAllowedDigestLength)
             {
                 throw new ArgumentOutOfRangeException(nameof(outputLength), outputLength, $"Output length must be between 1 and {maxAllowedDigestLength}");
             }
 
-            return Expand(Extract(inputKeyingMaterial, salt), outputLength, info);
+            return Expand(Extract(inputKeyingMaterial, salt), outputLength.Value, info);
         }
 
         private void CheckIfDisposed()
@@ -51,10 +64,10 @@ namespace HKDFrfc5869
         {
             if (salt == null)
             {
-                salt = new byte[digestLength];
+                salt = new byte[this.hmacProvider.DigestLength];
             }
 
-            return this.HMAC(salt, ikm);
+            return this.hmacProvider.HMAC(salt, ikm);
         }
 
         private byte[] Expand(byte[] prk, int len, byte[] info)
@@ -74,7 +87,7 @@ namespace HKDFrfc5869
                 Array.Copy(resultBlock, 0, currentInfo, 0, resultBlock.Length);
                 Array.Copy(info, 0, currentInfo, resultBlock.Length, info.Length);
                 currentInfo[currentInfo.Length - 1] = (byte)i;
-                resultBlock = this.HMAC(prk, currentInfo);
+                resultBlock = this.hmacProvider.HMAC(prk, currentInfo);
                 Array.Copy(resultBlock, 0, result, len - bytesRemaining, Math.Min(resultBlock.Length, bytesRemaining));
                 bytesRemaining -= resultBlock.Length;
             }
@@ -86,56 +99,21 @@ namespace HKDFrfc5869
         {
             if (!disposed)
             {
-                using (this.hmac) { }
+                if(disposing)
+                {
+                    this.hmacProvider.Dispose();
+                }
+
                 disposed = true;
             }
         }
 
-        ~HKDF()
-        {
-            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-            Dispose(false);
-        }
-
+        /// <summary>
+        /// 
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        private HMAC CreateHMACInstance(HashAlgorithmName algorithm)
-        {
-            if (algorithm == HashAlgorithmName.MD5)
-            {
-                return new HMACMD5();
-            }
-            else if (algorithm == HashAlgorithmName.SHA1)
-            {
-                return new HMACSHA1();
-            }
-            else if (algorithm == HashAlgorithmName.SHA256)
-            {
-                return new HMACSHA256();
-            }
-            else if (algorithm == HashAlgorithmName.SHA384)
-            {
-                return new HMACSHA384();
-            }
-            else if (algorithm == HashAlgorithmName.SHA512)
-            {
-                return new HMACSHA512();
-            }
-            else
-            {
-                throw new ArgumentOutOfRangeException(nameof(algorithm), algorithm, "Unsupported HashAlgorithmName");
-            }
-        }
-
-        private byte[] HMAC(byte[] key, byte[] message)
-        {
-            var hmac = this.hmac;
-            hmac.Key = key;
-            return hmac.ComputeHash(message);
         }
     }
 }
