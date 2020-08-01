@@ -1,9 +1,10 @@
-# HKDF
+# HKDFrfc5869
 A C# implementation of the rfc5869 HMAC based Extract-and-Expand Key Derivation Function (HKDF) (https://tools.ietf.org/html/rfc5869)
 
-### Highlights
+### Overview
 * Follows the algorithm and tests from https://tools.ietf.org/html/rfc5869
-* Uses '''Span<byte>''' for high performance
+* Uses Span<byte> for high performance
+* Extract and Expand have been combined to simplify the API, just call the DeriveKey() method
 
 ## Getting started
 ```
