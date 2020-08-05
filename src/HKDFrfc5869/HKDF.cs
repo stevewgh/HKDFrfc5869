@@ -80,21 +80,22 @@ namespace HKDFrfc5869
             var hashedValue = new Span<byte>();
             var result = new Span<byte>(new byte[outputLength]);
             var bytesRemaining = outputLength;
-
-            for (int i = 1; bytesRemaining > 0; i++)
+            byte iteration = 1;
+            do
             {
                 var tumbledValue = new Span<byte>(new byte[hashedValue.Length + info.Length + 1]);
                 hashedValue.CopyTo(tumbledValue);
                 info.CopyTo(tumbledValue.Slice(hashedValue.Length, info.Length));
-                tumbledValue[tumbledValue.Length - 1] = (byte)i;
+                tumbledValue[tumbledValue.Length - 1] = iteration;
 
                 hashedValue = this.hmacProvider.HMAC(pseudoRandomKey, tumbledValue);
-                
+
                 int lengthToCopy = Math.Min(hashedValue.Length, bytesRemaining);
                 hashedValue.Slice(0, lengthToCopy).CopyTo(result.Slice(outputLength - bytesRemaining, lengthToCopy));
 
-                bytesRemaining -= hashedValue.Length;
+                iteration++;
             }
+            while ((bytesRemaining -= hashedValue.Length) > 0);
 
             return result;
         }
